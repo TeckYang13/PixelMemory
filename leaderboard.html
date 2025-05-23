@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard - Pixel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>排行榜</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home Page</a></li>
+                <li><a href="Pixel.html">Buy Pixel</a></li>
+                <li><a href="leaderboard.html">Leaderboard</a></li>
+                <li><a href="FAQ.html">FAQ</a></li>
+                <li><a href="Contact.html">Contact Us</a></li>
+            </ul> 
+        </nav>
+    </header>
+
+    <div class="leaderboard-container">
+        <h2 class="leaderboard-title">🏆 前五名购买者</h2>
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>排名</th>
+                    <th>链接</th>
+                    <th>购买格子数</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <!-- JavaScript 动态注入 -->
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <i>
+            <p>&copy; 2025 PixelMemory. All rights reserved.
+                I am not responsible for the content of external sites. 
+                Images featured on homepage are © of their respective owners.</p>
+        </i>
+    </footer>
+
+    <script src="javascript/leaderboard.js"></script>
+</body>
+</html>

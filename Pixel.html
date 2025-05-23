@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Buy Pixel Grid - Pixel</title>
+</head>
+<body>
+    <header>
+        <h1>Pixel</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home Page</a></li>
+                <li><a href="Pixel.html">Buy Pixel</a></li>
+                <li><a href="leaderboard.html">Leaderboard</a></li>
+                <li><a href="FAQ.html">FAQ</a></li>
+                <li><a href="Contact.html">Contact Us</a></li>
+            </ul> 
+        </nav>
+    </header>
+
+    <div class="main-content-pixel">
+        <div class="grid-container-pixel">
+            <div class="grid-pixel" id="pixelGrid"></div>
+        </div>
+
+        <div class="upload-panel-pixel">
+            <h2>Buy Pixel Grid</h2>
+            <div class="selection-info">
+                <p>Selected: <span id="selectedCount" class="count">0</span> pixels</p>
+                <p>Unit Price: <span class="count">$1</span> / pixel</p>
+            </div>
+            <div class="price-display">
+                Total Price: $<span id="totalPrice">0</span>
+            </div>
+
+            <div class="form-group-pixel">
+                <label>Upload Image</label>
+                <input type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)">
+                <div class="guidance-text_pixel">
+                <small class="guidance-text">
+                    <ul>
+                    <li>To achieve the best display effect in your purchased pixel area, and to avoid cropping or unwanted blank space, we strongly recommend uploading an image with the <strong>same aspect ratio as the selected area</strong>.</li>
+                    <br>
+                    <li>If your selected area is <strong>[show the current selected area size, e.g., 2x3 pixels]</strong>, the ideal image aspect ratio is <strong>[show the current aspect ratio, e.g., 2:3]</strong>.</li>
+                    <br>
+                    <li><strong>Tip:</strong> If the image ratio does not match, the system will try to display your image as fully as possible but may leave blank space around it.You can also use the ChatGPT or any tools to resize your image.</li>
+                    </ul>
+                </small>
+                </div>
+                <img id="preview" class="preview-image" style="display: none;">
+            </div>
+
+            <div class="form-group-pixel">
+                <label>Link URL</label>
+                <input type="url" id="linkInput" placeholder="https://example.com">
+                <div class="guidance-text_pixel">
+                <small class="guidance-text">
+                    <ul>
+                    <li>To get the best display effect in your purchased pixel area, please provide a complete webpage link.</li>
+                    </ul>
+                </small>
+                </div>
+            </div>
+            
+            <div class="form-group-pixel">
+                <label for="titleInput">标题:</label>
+                <input type="text" id="titleInput" name="title" placeholder="请输入标题" />
+            </div>
+
+            <button class="buy-btn" onclick="purchase()">Confirm Purchase and Upload</button>
+            <p id="errorMessage" class="error-message"></p>
+        </div>
+    </div>
+    <footer>
+        <i>
+            <p>&copy; 2025 PixelMemory. All rights reserved.
+                I am not responsible for the content of external sites. 
+                Images featured on homepage are © of their respective owners.</p>
+        </i>
+    </footer>
+    <script src="javascript/pixel.js"></script>
+</body>
+</html>

@@ -1,0 +1,605 @@
+
+
+/* 基本的页面样式，移除默认边距，设置默认字体和行高 */
+
+/* 页眉样式 */
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+header {
+    background-color: #222;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0 0;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #facc15; /* 黄色 hover */
+}
+
+/* 页脚样式 */
+footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    background-color: #222;
+    color: #aaa;
+    margin-top: 40px;
+}
+
+/* 网格容器样式 */
+#gridContainer {
+    display: grid;
+    /* 保持你的格子布局设置 */
+    grid-template-columns: repeat(auto-fill, minmax(10px, 1fr)); /* 根据需要调整格子最小宽度 */
+    grid-auto-rows: 10px; /* 设置行高，与列宽相同以创建正方形格子 */
+    gap: 0; /* 格子之间没有间隙 */
+    max-width: 1400px;
+    margin: 20px auto; /* 增加容器上下外边距，与页眉页脚拉开距离 */
+    background-size: cover;
+    position: relative;
+    width: 1400px;  /* cols * 每格宽度10px */
+    height: 1000px; /* rows * 每格高度10px */
+
+    /* **纠正这里的 overflow 设置** */
+    /* overflow: auto; 是 overflow-x: auto; overflow-y: auto; 的缩写 */
+    /* 你后面又单独设置了 overflow-y 和 overflow-x，会覆盖前面的 auto */
+    /* 如果希望内容超出时容器内部出现滚动条 (水平和垂直都可能)，保留 overflow: auto; */
+    /* 如果希望只在 Y 轴滚动，且不出现 X 轴滚动条，使用 overflow-y: auto; overflow-x: hidden; */
+    /* 考虑到你设置了固定宽度 1400px，水平方向也可能需要滚动，建议使用 overflow: auto; */
+    overflow: auto; /* 允许容器内部出现滚动条 */
+}
+
+/* 个别格子的样式 */
+.grid-item {
+    border: 0.5px solid #eee; /* 保持细边框，模拟网格线 */
+    background-color: #fff; /* 初始背景颜色 */
+    box-sizing: border-box; /* 确保边框包含在元素尺寸内 */
+    height: 10px;
+    width: 10px;
+}
+
+/* 鼠标悬停时添加的类 */
+.grid-item.hovered {
+    background-color: #ffcc00; /* 保留你喜欢的悬停颜色 */
+    /* 可以在悬停时给边框一个细微的变化 */
+    /* border-color: #ccc; */
+}
+
+/*Contect*/
+
+.contact-info-contact {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    border-bottom: 2px solid #facc15;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    color: #222;
+  }
+
+  .contact-method {
+    margin-bottom: 30px;
+  }
+
+  .contact-method h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #444;
+  }
+
+  .contact-method p {
+    margin: 0;
+    font-size: 16px;
+    color: #666;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 16px;       /* 图标间距 */
+    align-items: center;
+  }
+  
+  .social-links a {
+    display: inline-flex;
+    width: 56px;         /* 放大容器 */
+    height: 56px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow: hidden;    /* 防止溢出 */
+}
+
+.social-links svg {
+    width: 36px;
+    height: 36px;
+    display: block;
+    object-fit: contain;
+    fill: #555;
+    transition: fill 0.3s;
+}
+.social-links svg .icon {
+    transform: scale(1.5); /* 放大内容 */
+    transform-origin: center;
+}
+  
+  .social-links a:hover {
+    background-color: #e1306c;  /* Instagram 粉色作为hover色，其他可以根据需要改 */
+    transform: scale(1.1);
+  }
+
+  
+  .social-links a[title="小红书"]:hover {
+    background-color: #e94336; /* 小红书红色 */
+  }
+  
+  .social-links a[title="Instagram"]:hover {
+    background-color: #e1306c; /* Instagram 粉色 */
+  }
+  
+  .social-links a[title="TikTok"]:hover {
+    background-color: #69c9d0; /* TikTok 蓝色 */
+  }
+  
+  .social-links svg {
+    fill: #555;  /* 默认图标颜色 */
+    width: 20px;
+    height: 20px;
+    transition: fill 0.3s;
+  }
+  
+  .social-links a:hover svg {
+    fill: white;
+  }
+  
+
+/*FAQ*/
+.main-content-faq {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.page-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 40px;
+    font-size: 32px;
+}
+
+.faq-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.faq-item {
+    border-bottom: 1px solid #eee;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+}
+
+.faq-question {
+    padding: 20px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    color: #333;
+    transition: background-color 0.3s;
+}
+
+.faq-question:hover {
+    background-color: #f8f9fa;
+}
+
+.faq-question.active {
+    background-color: #f8f9fa;
+    color: #1a73e8;
+}
+
+.faq-answer {
+    padding: 0 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-out;
+    background-color: #fff;
+    color: #666;
+    line-height: 1.6;
+}
+
+.faq-answer.active {
+    padding: 20px;
+    max-height: 500px;
+}
+
+.arrow {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s;
+}
+
+.arrow::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid #666;
+    border-bottom: 2px solid #666;
+    transform: rotate(45deg);
+    margin-top: 4px;
+}
+
+.faq-question.active .arrow {
+    transform: rotate(180deg);
+}
+
+.contact-section-faq {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.contact-section h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.contact-section p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.contact-button-faq {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #1a73e8;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+}
+
+.contact-button-faq:hover {
+    background-color: #1557b0;
+}
+
+/*Pixel*/
+.main-content-pixel {
+    margin-top: 20px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.grid-container-pixel {
+    flex: 1;
+    overflow: auto;
+    margin-right: 20px;
+    position: relative;
+    width: 95%;
+    max-width: 1400px;
+}
+
+.grid-pixel {
+    display: grid;
+    grid-template-columns: repeat(140, 10px);
+    grid-template-rows: repeat(100, 10px);
+    gap: 0;
+    background-color: #fff;
+    border: 0.5px solid #eee;
+}
+
+.pixel {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    border: 0.5px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+    box-sizing: border-box; /* Important! */
+}
+
+.pixel:hover {
+    background-color: #ffcc00;
+}
+
+.pixel.selected {
+    background-color: #b3e0ff;
+}
+
+.pixel.purchased {
+    cursor: pointer;
+    pointer-events: none;
+}
+
+.pixel-group {
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.upload-panel-pixel {
+    width: 300px;
+    background: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 20px;
+}
+
+.upload-panel-pixel h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.form-group-pixel {
+    margin-bottom: 15px;
+}
+
+.form-group-pixel label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.form-group-pixel input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.preview-image {
+    max-width: 100%;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+.buy-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+.buy-btn:hover {
+    background-color: #45a049;
+}
+
+.error-message {
+    color: #ff4444;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.price-display {
+    font-size: 32px;
+    color: #4CAF50;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.price-change {
+    animation: priceUpdate 0.3s ease-out;
+}
+
+@keyframes priceUpdate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.selection-info {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.selection-info p {
+    margin: 8px 0;
+    color: #666;
+    font-size: 16px;
+}
+
+.selection-info .count {
+    font-size: 20px;
+    color: #1a73e8;
+    font-weight: bold;
+}
+
+.purchased-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 将 cover 改为 contain */
+    background-size:cover; /*<<<<<< 关键修改*/
+    background-position: center;
+    background-repeat: no-repeat; /* 确保图片不会重复 */
+    pointer-events: auto; /* 允许点击事件穿透 */
+    cursor: pointer;
+    z-index: 2; /* 确保它在像素格之上 */
+}
+
+@media (max-width: 768px) {
+    .main-content-pixel {
+        flex-direction: column;
+    }
+    .grid-container {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+    .upload-panel {
+        width: 100%;
+        position: static;
+    }
+}
+
+.guidance-text_pixel{
+    margin: 5px;
+    padding:10px;
+}
+
+/*leaderboard*/
+
+.leaderboard-container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+.leaderboard-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+.leaderboard-table th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+}
+
+.leaderboard-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.leaderboard-table a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.leaderboard-table a:hover {
+    text-decoration: underline;
+}
+
+td.rank {
+    /* 隐藏原始的 `#1` 等文本，因为我们现在通过伪元素来显示 */
+    font-size: 0; /* 隐藏原始文本 */
+    line-height: 0; /* 隐藏原始文本 */
+}
+
+/* 创建圆形背景和显示数字 */
+td.rank::before {
+    content: attr(data-rank); /* 从 data-rank 属性获取内容 */
+    display: inline-flex; /* 使用 inline-flex 便于内容垂直水平居中 */
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    width: 28px; /* 圆的宽度 */
+    height: 28px; /* 圆的高度 */
+    border-radius: 50%; /* 创建圆形 */
+    font-weight: bold;
+    font-size: 14px; /* 数字的字号 */
+    color: #333; /* 默认文字颜色 */
+    /* 默认背景色，将被排名特定的背景色覆盖 */
+    background-color: #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 添加一点阴影，使其更有立体感 */
+}
+
+/* 为前几名设置特定的背景色和文字颜色 (模仿第二张图片) */
+
+/* #1 排名 */
+td.rank[data-rank="1"]::before {
+    background-color: #FFD700; /* 金色 */
+    color: #333;
+    box-shadow: 0 3px 6px rgba(255,215,0,0.3); /* 更明显的阴影 */
+}
+
+/* #2 排名 */
+td.rank[data-rank="2"]::before {
+    background: silver;
+    color: #333;
+    box-shadow: 0 3px 6px rgba(192,192,192,0.3);
+}
+
+/* #3 排名 */
+td.rank[data-rank="3"]::before {
+    background-color: #CD7F32; /* 铜色 */
+    color: #333;
+    box-shadow: 0 3px 6px rgba(205,127,50,0.3);
+}
+
+td.rank[data-rank="4"]::before,
+td.rank[data-rank="5"]::before {
+    background-color: #5a6470; /* 更暗更灰的蓝灰 */
+    color: #bbb; /* 浅灰色，柔和不抢眼 */
+    box-shadow: none; /* 取消阴影，减弱强调 */
+}
+
+
+
