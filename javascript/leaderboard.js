@@ -1,4 +1,4 @@
-const BACKEND_URL = window.BACKEND_URL;
+const BACKEND_URL = window.BACKEND_URL; // 确保是这行
 document.addEventListener("DOMContentLoaded", function () {
     fetch(`${BACKEND_URL}/api/leaderboard/`)
         .then(response => response.json())

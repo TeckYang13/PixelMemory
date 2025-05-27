@@ -1,5 +1,5 @@
 
-const BACKEND_URL = window.BACKEND_URL;
+const BACKEND_URL = window.BACKEND_URL; // 确保是这行
 const gridContainer = document.getElementById('gridContainer');
 const rows = 100;
 const cols = 140;

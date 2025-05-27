@@ -1,5 +1,5 @@
 // 全局变量
-const BACKEND_URL = window.BACKEND_URL;
+const BACKEND_URL = window.BACKEND_URL; // 确保是这行
 const grid = document.getElementById('pixelGrid');
 let selectedPixels = new Set();
 const PRICE_PER_PIXEL = 1;
