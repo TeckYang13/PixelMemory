@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Buy Pixel Grid - Pixel Memory</title>
+    <script>
+        // Render 会在部署时自动将 "{{ BACKEND_URL }}" 替换为实际的环境变量值
+        // 所以在生产环境中，这行会变成：window.BACKEND_URL = "https://pixelwebbackend.onrender.com";
+        window.BACKEND_URL = "{{ BACKEND_URL }}"; 
+    </script>
 </head>
 <body>
     <header class="site-header">

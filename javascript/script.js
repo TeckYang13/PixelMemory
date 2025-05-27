@@ -1,5 +1,5 @@
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = window.BACKEND_URL;
 const gridContainer = document.getElementById('gridContainer');
 const rows = 100;
 const cols = 140;

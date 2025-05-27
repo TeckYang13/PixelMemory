@@ -1,4 +1,4 @@
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = window.BACKEND_URL;
 document.addEventListener("DOMContentLoaded", function () {
     fetch("${BACKEND_URL}/api/leaderboard/")
         .then(response => response.json())
