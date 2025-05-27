@@ -1,4 +1,5 @@
 // 全局变量
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const grid = document.getElementById('pixelGrid');
 let selectedPixels = new Set();
 const PRICE_PER_PIXEL = 1;
