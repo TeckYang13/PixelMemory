@@ -243,7 +243,7 @@ function createPurchasedArea(pixels, image, link) {
 }
 
 // 加载已购买区域数据
-fetch('${BACKEND_URL}/purchased-list/')
+fetch(`${BACKEND_URL}/purchased-list/`)
     .then(async res => {
         if (!res.ok) throw new Error('无法获取已购买数据');
 
@@ -352,7 +352,7 @@ async function purchase() {
 
     try {
         // 1. 调用 save-purchase 接口
-        const saveRes = await fetch("${BACKEND_URL}/save-purchase/", {
+        const saveRes = await fetch(`${BACKEND_URL}/save-purchase/`, {
             method: "POST",
             // *** 关键修改：移除 headers 中的 Content-Type，让浏览器自动设置 multipart/form-data ***
             body: formData, // *** 关键修改：使用 FormData 作为请求体 ***
@@ -370,7 +370,7 @@ async function purchase() {
         const groupId = saveData.group_id; 
 
         // 2. 创建结账会话，这里仍然是 JSON 请求
-        const checkoutRes = await fetch("${BACKEND_URL}create-checkout-session/", {
+        const checkoutRes = await fetch(`${BACKEND_URL}create-checkout-session/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" }, // create-checkout-session 视图期望 JSON
             body: JSON.stringify({

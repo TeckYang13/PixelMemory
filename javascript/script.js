@@ -22,7 +22,7 @@ function getPixelCoordinates(pixelId) {
 }
 
 // 加载数据
-fetch('${BACKEND_URL}/purchased-list/')
+fetch(`${BACKEND_URL}/purchased-list/`)
   .then(res => res.json())
   .then(data => {
     data.forEach(group => {

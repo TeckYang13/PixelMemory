@@ -1,6 +1,6 @@
 const BACKEND_URL = window.BACKEND_URL;
 document.addEventListener("DOMContentLoaded", function () {
-    fetch("${BACKEND_URL}/api/leaderboard/")
+    fetch(`${BACKEND_URL}/api/leaderboard/`)
         .then(response => response.json())
         .then(data => {
             const tbody = document.getElementById("leaderboard-body");
