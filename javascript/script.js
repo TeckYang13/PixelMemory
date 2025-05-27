@@ -1,3 +1,5 @@
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const gridContainer = document.getElementById('gridContainer');
 const rows = 100;
 const cols = 140;
@@ -20,7 +22,7 @@ function getPixelCoordinates(pixelId) {
 }
 
 // 加载数据
-fetch('http://127.0.0.1:8000/purchased-list/')
+fetch('${BACKEND_URL}/purchased-list/')
   .then(res => res.json())
   .then(data => {
     data.forEach(group => {

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetch("http://127.0.0.1:8000/api/leaderboard/")
+    fetch("${BACKEND_URL}/api/leaderboard/")
         .then(response => response.json())
         .then(data => {
             const tbody = document.getElementById("leaderboard-body");
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 row.innerHTML = `
                     <td class="rank" data-rank="${rankNumber}"></td> <td><a href="${item.link}" target="_blank">${item.link}</a></td>
-                    <td>${item.pixel_count} 格子</td>
+                    <td>${item.pixel_count} pixel</td>
                 `;
 
                 tbody.appendChild(row);

@@ -16,6 +16,7 @@ function createGrid() {
         pixel.addEventListener('mousedown', handleMouseDown);
         pixel.addEventListener('mouseover', handleMouseOver);
         pixel.addEventListener('click', handleClick);
+        pixel.addEventListener('touchstart', handleTouchStart);
         grid.appendChild(pixel);
     }
     
@@ -241,7 +242,7 @@ function createPurchasedArea(pixels, image, link) {
 }
 
 // 加载已购买区域数据
-fetch('http://127.0.0.1:8000/purchased-list/')
+fetch('${BACKEND_URL}/purchased-list/')
     .then(async res => {
         if (!res.ok) throw new Error('无法获取已购买数据');
 
@@ -274,75 +275,6 @@ fetch('http://127.0.0.1:8000/purchased-list/')
     .catch(err => {
         alert('加载购买记录失败：' + err.message);
     });
-
-// 购买功能
-function purchase() {
-    if (!validateSelection()) return;
-
-    const imageFile = document.getElementById('imageUpload').files[0];
-    const link = document.getElementById('linkInput').value.trim();
-    const title = document.getElementById('titleInput').value.trim();  // 新增
-
-    const formData = new FormData();
-    formData.append('image', imageFile);
-    formData.append('link', link);
-    formData.append('pixels', JSON.stringify(Array.from(selectedPixels)));
-    formData.append('title', title);   // 新增传title字段
-
-    fetch('http://127.0.0.1:8000/save-purchase/', {
-        method: 'POST',
-        body: formData
-    })
-    .then(async res => {
-        if (!res.ok) {
-            const text = await res.text();
-            throw new Error('服务器返回错误：' + text);
-        }
-
-        const contentType = res.headers.get('Content-Type');
-        if (!contentType || !contentType.includes('application/json')) {
-            const text = await res.text();
-            throw new Error('响应不是 JSON：' + text);
-        }
-
-        return res.json();
-    })
-    .then(data => {
-        alert(data.message || '购买成功！');
-
-        // 新增购买区域覆盖层
-        const newPixels = new Set(selectedPixels);
-        purchasedGroups.push({
-            pixels: newPixels,
-            image: data.image_url, // 后端返回的图片 URL
-            link: link
-        });
-
-        const overlay = createPurchasedArea(newPixels, data.image_url, link);
-        grid.appendChild(overlay);
-
-        // 标记像素为已购买状态
-        newPixels.forEach(id => {
-            const pixel = document.querySelector(`[data-id="${id}"]`);
-            if (pixel) {
-                pixel.classList.remove('selected');
-                pixel.classList.add('purchased');
-            }
-        });
-
-        selectedPixels.clear();
-        updateSelectionInfo();
-
-        // 清理表单
-        document.getElementById('imageUpload').value = '';
-        document.getElementById('linkInput').value = '';
-        document.getElementById('preview').style.display = 'none';
-        document.getElementById('titleInput').value = '';
-    })
-    .catch(err => {
-        alert('购买失败：' + err.message);
-    });
-}
 
 // 初始化网格
 createGrid();
@@ -389,5 +321,91 @@ function updateSelectedPixelsDisplay() {
     }
 }
 
-// 确保在每次像素选择变化时调用此函数
-// 例如，在 addPixelToSelection 和 removePixelFromSelection 的末尾调用 updateSelectedPixelsDisplay();
+// 这是你前端最终应该使用的 purchase 函数
+async function purchase() {
+    // 1. 调用 validateSelection 确保前端输入有效 (确保 validateSelection 检查所有必要字段)
+    if (!validateSelection()) {
+        console.log("前端验证失败，阻止提交。"); 
+        return;
+    }
+
+    const imageFile = document.getElementById('imageUpload').files[0];
+    const link = document.getElementById('linkInput').value.trim();
+    const title = document.getElementById('titleInput').value.trim();
+    const pixelIdsArray = Array.from(selectedPixels); // 获取选择的像素ID数组
+    const selectedCount = selectedPixels.size; // 确保 selectedPixels 在此作用域内是可访问的 Set 对象
+
+    // 如果需要，可以在这里添加前端调试日志，确认这些值在 FormData 构造前是否正确
+    // console.log("Debug Info (Frontend before FormData):");
+    // console.log("Image File:", imageFile);
+    // console.log("Link:", link);
+    // console.log("Title:", title);
+    // console.log("Selected Pixels Array:", pixelIdsArray);
+
+    // 使用 FormData 来构建请求体，以匹配后端期望的 multipart/form-data
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    formData.append('link', link);
+    formData.append('pixels', JSON.stringify(pixelIdsArray)); // 确保是 JSON 字符串
+    formData.append('title', title);
+
+    try {
+        // 1. 调用 save-purchase 接口
+        const saveRes = await fetch("${BACKEND_URL}/save-purchase/", {
+            method: "POST",
+            // *** 关键修改：移除 headers 中的 Content-Type，让浏览器自动设置 multipart/form-data ***
+            body: formData, // *** 关键修改：使用 FormData 作为请求体 ***
+        });
+
+        if (!saveRes.ok) {
+            // 获取并打印后端返回的具体错误信息，这将帮助你更好地调试
+            const errorText = await saveRes.text();
+            console.error("Error from save-purchase (Response Text):", errorText); // 打印到控制台
+            throw new Error(`保存失败: ${saveRes.status} - ${errorText}`);
+        }
+
+        const saveData = await saveRes.json();
+        // 确保后端 save_purchase 视图返回了 group_id
+        const groupId = saveData.group_id; 
+
+        // 2. 创建结账会话，这里仍然是 JSON 请求
+        const checkoutRes = await fetch("${BACKEND_URL}create-checkout-session/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }, // create-checkout-session 视图期望 JSON
+            body: JSON.stringify({
+                quantity: selectedCount,
+                group_id: groupId,
+            }),
+        });
+
+        const checkoutData = await checkoutRes.json();
+
+        if (checkoutData.id) {
+            const stripe = Stripe("pk_live_51RRq7xD5KWKNltNDGFPjk0qKraRXEbqfEuxAatuweHawtj1eXaCZLoUaJ8YVzaQcwEtMF39GyV1jYGMgl2b9px4U00haH5kzzl");
+            // 确保 Stripe JS 库已经加载
+            // 在实际项目中，Stripe 对象应该在 script 标签中预加载
+            // 确保你有一个 <script src="https://js.stripe.com/v3/"></script> 在你的 HTML 中
+            
+            await new Promise(r => setTimeout(r, 100)); // 小延迟，确保Stripe加载
+            stripe.redirectToCheckout({ sessionId: checkoutData.id });
+        } else {
+            document.getElementById("errorMessage").innerText = "Error: " + (checkoutData.error || "Unknown error during checkout session creation");
+        }
+    } catch (error) {
+        console.error("Purchase process error:", error);
+        document.getElementById("errorMessage").innerText = "购买失败：" + error.message;
+    }
+}
+
+
+function handleTouchStart(e) {
+    e.preventDefault();
+    // 让 touch 行为和鼠标点击一样
+    handleMouseDown({
+        target: e.target,
+        button: 0, // 模拟左键
+        preventDefault: () => {},
+        ctrlKey: false,
+        metaKey: false
+    });
+}
