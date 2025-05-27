@@ -370,7 +370,7 @@ async function purchase() {
         const groupId = saveData.group_id; 
 
         // 2. 创建结账会话，这里仍然是 JSON 请求
-        const checkoutRes = await fetch(`${BACKEND_URL}create-checkout-session/`, {
+        const checkoutRes = await fetch(`${BACKEND_URL}/create-checkout-session/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" }, // create-checkout-session 视图期望 JSON
             body: JSON.stringify({
