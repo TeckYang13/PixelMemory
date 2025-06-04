@@ -8,6 +8,11 @@ let isSelecting = false; // 是否处于选择模式
 let selectionStart = null; // 选择起始像素ID
 let isErasing = false; // 是否处于擦除模式
 
+// --- 新增防连点相关的全局变量和元素引用 ---
+const purchaseButton = document.querySelector('.buy-btn');
+const errorMessageElement = document.getElementById('errorMessage');
+let isProcessingPurchase = false; // 标记是否正在处理购买流程
+
 // --- 核心事件处理逻辑的抽象化 ---
 
 // 启动选择或擦除模式的通用函数
@@ -22,7 +27,7 @@ function handleStartSelection(pixelId, isCtrlOrMetaKey) {
         isErasing = false;
         isSelecting = true;
         selectionStart = pixelId;
-        
+
         // 如果没有按 Ctrl/Cmd，清空之前选择
         if (!isCtrlOrMetaKey) {
             selectedPixels.clear();
@@ -30,7 +35,7 @@ function handleStartSelection(pixelId, isCtrlOrMetaKey) {
                 pixel.classList.remove('selected');
             });
         }
-        
+
         selectedPixels.add(pixelId);
         document.querySelector(`[data-id="${pixelId}"]`).classList.add('selected');
     }
@@ -98,29 +103,29 @@ function createGrid() {
         const pixel = document.createElement('div');
         pixel.className = 'pixel';
         pixel.dataset.id = i;
-        
+
         // 鼠标事件监听
         pixel.addEventListener('mousedown', handleMouseDown);
         pixel.addEventListener('mouseover', handleMouseOver);
-        
+
         // 触摸事件监听 (touchstart 在 pixel 上，touchmove/touchend 在 grid 或 document 上)
         pixel.addEventListener('touchstart', handleTouchStart);
-        
+
         // 点击已购买像素跳转链接
-        pixel.addEventListener('click', handleClick); 
-        
+        pixel.addEventListener('click', handleClick);
+
         grid.appendChild(pixel);
     }
-    
+
     // 鼠标事件的全局监听
     document.addEventListener('mouseup', endSelection);
     grid.addEventListener('mouseleave', endSelection); // 鼠标滑出网格区域时结束选择
-    
+
     // 触摸事件的全局监听 (重要，因为用户可能在滑动时手指离开 pixel)
     grid.addEventListener('touchmove', handleTouchMove);
     grid.addEventListener('touchend', endSelection); // 结束选择，无论在哪个元素上
     document.addEventListener('touchend', endSelection); // 即使滑出网格也要结束
-    
+
     // 阻止右键菜单
     grid.addEventListener('contextmenu', e => e.preventDefault());
 }
@@ -166,7 +171,7 @@ function handleMouseOver(e) {
 function handleTouchStart(e) {
     e.preventDefault(); // 阻止默认的缩放/滚动
     const touch = e.touches[0]; // 获取第一个触摸点
-    
+
     // 从触摸点坐标获取目标像素
     const targetPixel = document.elementFromPoint(touch.clientX, touch.clientY);
 
@@ -212,7 +217,7 @@ function updateSelectionInfo() {
     const count = selectedPixels.size;
     const priceDisplay = document.getElementById('totalPrice');
     const countDisplay = document.getElementById('selectedCount');
-    
+
     if (countDisplay) countDisplay.textContent = count;
     const newPrice = count * PRICE_PER_PIXEL;
     if (priceDisplay) {
@@ -223,13 +228,13 @@ function updateSelectionInfo() {
     }
 
     // 更新上传图片指导文本
-    updateSelectedPixelsDisplay(); 
+    updateSelectedPixelsDisplay();
 }
 
 function previewImage(event) {
     const preview = document.getElementById('preview');
     const file = event.target.files[0];
-    
+
     if (file && preview) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -241,10 +246,11 @@ function previewImage(event) {
 }
 
 function validateSelection() {
-    const errorMessage = document.getElementById('errorMessage');
-    
+    // 假设 errorMessageElement 已经由全局变量获取
+    // const errorMessage = document.getElementById('errorMessage'); // 移除重复获取
+
     if (selectedPixels.size === 0) {
-        if (errorMessage) errorMessage.textContent = '请选择要购买的像素格子';
+        if (errorMessageElement) errorMessageElement.textContent = '请选择要购买的像素格子';
         return false;
     }
 
@@ -253,26 +259,26 @@ function validateSelection() {
     const maxRow = Math.max(...pixelArray.map(p => p.row));
     const minCol = Math.min(...pixelArray.map(p => p.col));
     const maxCol = Math.max(...pixelArray.map(p => p.col));
-    
+
     const expectedSize = (maxRow - minRow + 1) * (maxCol - minCol + 1);
     if (selectedPixels.size !== expectedSize) {
-        if (errorMessage) errorMessage.textContent = '请选择连续的像素格子';
+        if (errorMessageElement) errorMessageElement.textContent = '请选择连续的像素格子';
         return false;
     }
 
     const imageUpload = document.getElementById('imageUpload');
     if (!imageUpload || !imageUpload.files[0]) {
-        if (errorMessage) errorMessage.textContent = '请上传图片';
+        if (errorMessageElement) errorMessageElement.textContent = '请上传图片';
         return false;
     }
 
     const linkInput = document.getElementById('linkInput');
     if (!linkInput || !linkInput.value.trim()) {
-        if (errorMessage) errorMessage.textContent = '请输入链接地址';
+        if (errorMessageElement) errorMessageElement.textContent = '请输入链接地址';
         return false;
     }
 
-    if (errorMessage) errorMessage.textContent = '';
+    if (errorMessageElement) errorMessageElement.textContent = '';
     return true;
 }
 
@@ -282,7 +288,7 @@ function createPurchasedArea(pixels, image, link) {
     const maxRow = Math.max(...pixelArray.map(p => p.row));
     const minCol = Math.min(...pixelArray.map(p => p.col));
     const maxCol = Math.max(...pixelArray.map(p => p.col));
-    const PIXEL_VISUAL_UNIT = 10; 
+    const PIXEL_VISUAL_UNIT = 10;
 
     const overlay = document.createElement('div');
     overlay.className = 'purchased-overlay';
@@ -334,9 +340,9 @@ fetch(`${BACKEND_URL}/purchased-list/`)
     .catch(err => {
         // 使用更安全的 alert 或在 UI 中显示错误
         console.error('加载购买记录失败：', err);
-        const errorMessageDiv = document.getElementById('errorMessage');
-        if (errorMessageDiv) {
-            errorMessageDiv.textContent = '加载购买记录失败，请刷新页面。';
+        // const errorMessageDiv = document.getElementById('errorMessage'); // 移除重复获取
+        if (errorMessageElement) {
+            errorMessageElement.textContent = '加载购买记录失败，请刷新页面。';
         } else {
             alert('加载购买记录失败：' + err.message);
         }
@@ -353,42 +359,79 @@ function updateSelectedPixelsDisplay() {
     if (selectedPixelCountElement) selectedPixelCountElement.textContent = count;
     if (currentPriceElement) currentPriceElement.textContent = (count * PRICE_PER_PIXEL).toFixed(2);
 
-    const guidanceTextElement = document.getElementById('imageUploadGuidance');
-    if (!guidanceTextElement) return;
+    const guidanceTextElement = document.querySelector('.guidance-text_pixel small.guidance-text'); // 假设这里是显示指南文本的元素
+    // 根据你的 HTML 结构，确保 guidanceTextElement 正确指向了需要更新的元素
+    // 你原来的 HTML 是这样的:
+    // <div class="guidance-text_pixel">
+    //     <small class="guidance-text">
+    //         <ul>
+    //             <li>...</li>
+    //         </ul>
+    //     </small>
+    // </div>
+    // 如果你要更新 ul 里面的内容，或者 ul 整个，需要调整选择器
 
-    if (count > 0) {
-        const pixelArray = Array.from(selectedPixels).map(id => getPixelCoordinates(parseInt(id)));
-        const minRow = Math.min(...pixelArray.map(p => p.row));
-        const maxRow = Math.max(...pixelArray.map(p => p.row));
-        const minCol = Math.min(...pixelArray.map(p => p.col));
-        const maxCol = Math.max(...pixelArray.map(p => p.col));
+    if (guidanceTextElement) { // 检查元素是否存在
+        if (count > 0) {
+            const pixelArray = Array.from(selectedPixels).map(id => getPixelCoordinates(parseInt(id)));
+            const minRow = Math.min(...pixelArray.map(p => p.row));
+            const maxRow = Math.max(...pixelArray.map(p => p.row));
+            const minCol = Math.min(...pixelArray.map(p => p.col));
+            const maxCol = Math.max(...pixelArray.map(p => p.col));
 
-        const areaCols = (maxCol - minCol + 1);
-        const areaRows = (maxRow - minRow + 1);
+            const areaCols = (maxCol - minCol + 1);
+            const areaRows = (maxRow - minRow + 1);
 
-        function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
-        const commonDivisor = gcd(areaCols, areaRows);
-        const currentRatio = `${areaCols / commonDivisor}:${areaRows / commonDivisor}`;
+            function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+            const commonDivisor = gcd(areaCols, areaRows);
+            const currentRatio = `${areaCols / commonDivisor}:${areaRows / commonDivisor}`;
 
-        guidanceTextElement.innerHTML = `
-            为了在您购买的像素区域获得最佳显示效果，避免图片被裁剪或出现多余空白，我们强烈建议您上传一张**宽高比例与所选区域一致**的图片。
-            <br>
-            您当前选择的区域是 **${areaCols}x${areaRows} 像素格**，对应的理想图片比例是 **${currentRatio}**。
-            <br>
-            **小提示：** 如果图片比例不匹配，系统会尽可能地完整显示您的图片，但可能会在图片周围留白。
-        `;
-    } else {
-        guidanceTextElement.innerHTML = `
-            为了在您购买的像素区域获得最佳显示效果，请选择像素后查看建议的图片比例。
-        `;
+            guidanceTextElement.innerHTML = `
+                <ul>
+                    <li>为了在您购买的像素区域获得最佳显示效果，避免图片被裁剪或出现多余空白，我们强烈建议您上传一张**宽高比例与所选区域一致**的图片。</li>
+                    <br>
+                    <li>您当前选择的区域是 **${areaCols} × ${areaRows} 像素格**。由于每个像素是 <strong>10px × 10px</strong>，所以图片建议尺寸为 <strong>${areaCols * 10}px × ${areaRows * 10}px</strong> (宽高比例 <strong>${currentRatio}</strong>)。</li>
+                    <br>
+                    <li><strong>小提示：</strong> 如果图片比例不匹配，系统会尽可能地完整显示您的图片，但可能会在图片周围留白。您也可以使用 ChatGPT 或其他工具调整图片尺寸。</li>
+                </ul>
+            `;
+        } else {
+            // 这是你的原始指导文本，当没有选择像素时显示
+            guidanceTextElement.innerHTML = `
+                <ul>
+                    <li>为了在您购买的像素区域获得最佳显示效果，避免图片被裁剪或出现多余空白，我们强烈建议上传一张**宽高比例与所选区域一致**的图片。</li>
+                    <br>
+                    <li>您选择了一个 **2 × 3 像素**的区域。由于每个像素是 **10px × 10px**，所以图片应该为 **20px × 30px** (宽高比 **2:3**)。</li>
+                    <br>
+                    <li><strong>小提示：</strong> 如果图片比例不匹配，系统会尝试尽可能完整地显示您的图片，但可能会在其周围留下空白。您也可以使用 ChatGPT 或任何工具调整图片尺寸。</li>
+                </ul>
+            `;
+        }
     }
 }
 
-// 这是你前端最终应该使用的 purchase 函数
+
+// --- 这是你前端最终应该使用的 purchase 函数，已集成防连点逻辑 ---
 async function purchase() {
-    // 1. 调用 validateSelection 确保前端输入有效 (确保 validateSelection 检查所有必要字段)
+    // 1. 防连点检查
+    if (isProcessingPurchase) {
+        console.log("正在处理购买，请勿重复点击。");
+        return; // 如果正在处理中，则直接返回，阻止重复提交
+    }
+
+    // 设置处理标志，禁用按钮，并更新按钮文本
+    isProcessingPurchase = true;
+    purchaseButton.disabled = true;
+    purchaseButton.textContent = '处理中... 请稍候';
+
+    // 清除任何之前的错误信息
+    errorMessageElement.textContent = '';
+    errorMessageElement.style.display = 'none';
+
+    // 2. 调用 validateSelection 确保前端输入有效
     if (!validateSelection()) {
-        console.log("前端验证失败，阻止提交。"); 
+        console.log("前端验证失败，阻止提交。");
+        resetPurchaseButton(); // 验证失败时重置按钮状态
         return;
     }
 
@@ -414,15 +457,23 @@ async function purchase() {
         });
 
         if (!saveRes.ok) {
-            // 获取并打印后端返回的具体错误信息，这将帮助你更好地调试
             const errorText = await saveRes.text();
-            console.error("Error from save-purchase (Response Text):", errorText); // 打印到控制台
-            throw new Error(`保存失败: ${saveRes.status} - ${errorText}`);
+            console.error("Error from save-purchase (Response Text):", errorText);
+            // 尝试解析JSON错误，如果不是JSON，则直接显示文本
+            let errorMessage = `保存失败: ${saveRes.status}`;
+            try {
+                const errorJson = JSON.parse(errorText);
+                errorMessage += ` - ${errorJson.error || errorJson.message || '未知错误'}`;
+            } catch (e) {
+                errorMessage += ` - ${errorText}`;
+            }
+            displayErrorMessage(errorMessage); // 使用辅助函数显示错误
+            resetPurchaseButton(); // 失败时重置按钮状态
+            return;
         }
 
         const saveData = await saveRes.json();
-        // 确保后端 save_purchase 视图返回了 group_id
-        const groupId = saveData.group_id; 
+        const groupId = saveData.group_id;
 
         // 2. 创建结账会话，这里仍然是 JSON 请求
         const checkoutRes = await fetch(`${BACKEND_URL}/create-checkout-session/`, {
@@ -434,31 +485,61 @@ async function purchase() {
             }),
         });
 
+        if (!checkoutRes.ok) {
+             const errorText = await checkoutRes.text();
+             console.error("Error from create-checkout-session (Response Text):", errorText);
+             let errorMessage = `结账会话创建失败: ${checkoutRes.status}`;
+             try {
+                 const errorJson = JSON.parse(errorText);
+                 errorMessage += ` - ${errorJson.error || errorJson.message || '未知错误'}`;
+             } catch (e) {
+                 errorMessage += ` - ${errorText}`;
+             }
+             displayErrorMessage(errorMessage);
+             resetPurchaseButton(); // 失败时重置按钮状态
+             return;
+        }
+
         const checkoutData = await checkoutRes.json();
 
         if (checkoutData.id) {
-            // 确保 Stripe JS 库已经加载
-            // 在实际项目中，Stripe 对象应该在 script 标签中预加载
-            // 确保你有一个 <script src="https://js.stripe.com/v3/"></script> 在你的 HTML 中
-            const stripe = Stripe("pk_test_51RRq7xD5KWKNltNDr2hrMazhAlsauRJOFlQfYF4c7l9VooduRgxkeSEQwRvj63xxUiq5CVOUlWhoI7dCtjRA13xX00nmOOfTi0"); // 请替换为您的真实 Stripe Publishable Key
+            const stripe = Stripe("pk_test_51RRq7xD5KWKNltNDr2hrMazhAlsauRJOFlQfYF4c7l9VooduRgxkeSEQwRvj63xxUiq5CVOUlWhoI7dCtjRA13xX00nmOOfTi0"); // 替换为你的真实 Stripe Publishable Key
+
+            // 等待一小段时间确保 Stripe JS 库完全加载和初始化
+            await new Promise(r => setTimeout(r, 100));
             
-            await new Promise(r => setTimeout(r, 100)); // 小延迟，确保Stripe加载
-            stripe.redirectToCheckout({ sessionId: checkoutData.id });
-        } else {
-            const errorMessageElement = document.getElementById("errorMessage");
-            if (errorMessageElement) {
-                errorMessageElement.innerText = "Error: " + (checkoutData.error || "Unknown error during checkout session creation");
-            } else {
-                alert("Error: " + (checkoutData.error || "Unknown error during checkout session creation"));
+            // 重定向到 Stripe 结账页面
+            const { error } = await stripe.redirectToCheckout({ sessionId: checkoutData.id });
+
+            if (error) {
+                displayErrorMessage(error.message);
+                resetPurchaseButton(); // Stripe 错误时重置按钮状态
             }
+            // 注意：如果成功重定向到 Stripe，resetPurchaseButton 不应该在这里被调用，
+            // 因为页面会跳转。只有在重定向失败时才需要。
+            // 实际上，Stripe 重定向通常是单向的，不需要在这里重置。
+        } else {
+            // 如果后端返回的 checkoutData 没有 id
+            displayErrorMessage("错误: " + (checkoutData.error || "创建结账会话时发生未知错误"));
+            resetPurchaseButton(); // 失败时重置按钮状态
         }
     } catch (error) {
-        console.error("Purchase process error:", error);
-        const errorMessageElement = document.getElementById("errorMessage");
-        if (errorMessageElement) {
-            errorMessageElement.innerText = "购买失败：" + error.message;
-        } else {
-            alert("购买失败：" + error.message);
-        }
+        console.error("购买流程错误:", error);
+        displayErrorMessage("购买失败: " + error.message);
+        resetPurchaseButton(); // 发生任何异常时重置按钮状态
     }
+}
+
+
+// --- 辅助函数：显示错误信息 ---
+function displayErrorMessage(message) {
+    errorMessageElement.textContent = message;
+    errorMessageElement.style.display = 'block';
+}
+
+// --- 辅助函数：重置购买按钮状态 ---
+function resetPurchaseButton() {
+    isProcessingPurchase = false; // 重置处理标志
+    purchaseButton.disabled = false; // 重新启用按钮
+    purchaseButton.textContent = '确认购买并上传'; // 恢复按钮文本
 }
