@@ -440,7 +440,7 @@ async function purchase() {
             // 确保 Stripe JS 库已经加载
             // 在实际项目中，Stripe 对象应该在 script 标签中预加载
             // 确保你有一个 <script src="https://js.stripe.com/v3/"></script> 在你的 HTML 中
-            const stripe = Stripe("pk_live_51RRq7xD5KWKNltNDGFPjk0qKraRXEbqfEuxAatuweHawtj1eXaCZLoUaJ8YVzaQcwEtMF39GyV1jYGMgl2b9px4U00haH5kzzl"); // 请替换为您的真实 Stripe Publishable Key
+            const stripe = Stripe("pk_test_51RRq7xD5KWKNltNDr2hrMazhAlsauRJOFlQfYF4c7l9VooduRgxkeSEQwRvj63xxUiq5CVOUlWhoI7dCtjRA13xX00nmOOfTi0"); // 请替换为您的真实 Stripe Publishable Key
             
             await new Promise(r => setTimeout(r, 100)); // 小延迟，确保Stripe加载
             stripe.redirectToCheckout({ sessionId: checkoutData.id });
