@@ -418,7 +418,7 @@ async function purchase() {
 
     // 清除任何之前的错误信息
     errorMessageElement.textContent = '';
-    errorMessageElement.style.display = 'none';
+    // errorMessageElement.style.display = 'none';
 
     // 2. 调用 validateSelection 确保前端输入有效
     if (!validateSelection()) {
