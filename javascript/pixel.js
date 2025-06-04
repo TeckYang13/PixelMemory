@@ -495,7 +495,7 @@ async function purchase() {
         const checkoutData = await checkoutRes.json();
 
         if (checkoutData.id) { // 如果成功获取到 Stripe 会话ID
-            const stripe = Stripe("pk_test_51RRq7xD5KWKNltNDr2hrMazhAlsauRJOFlQfYF4c7l9VooduRgxkeSEQwRvj63xxUiq5CVOUlWhoI7dCtjRA13xX00nmOOfTi0"); // 替换为你的真实 Stripe Publishable Key
+            const stripe = Stripe("pk_live_51RRq7xD5KWKNltNDGFPjk0qKraRXEbqfEuxAatuweHawtj1eXaCZLoUaJ8YVzaQcwEtMF39GyV1jYGMgl2b9px4U00haH5kzzl"); // 替换为你的真实 Stripe Publishable Key
 
             // 添加一小段延迟，确保 Stripe JS 库完全加载和初始化
             await new Promise(r => setTimeout(r, 100));
